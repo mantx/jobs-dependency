@@ -6,6 +6,7 @@ module ShawnLib
 
     def initialize(jobs='') 
       @jobs = parseJobs jobs
+      @jobs_reversed = @jobs.invert
     end 
 
     def destroy 
@@ -35,6 +36,17 @@ module ShawnLib
 
     def output
       result = ''
+      jobs = @jobs.clone
+      jobs.each do |j1, j2|
+        next if j1.nil? || j2 == :__deleted
+        job = findRoot j1
+        until job.nil? do
+          result << job.to_s
+          #empty this job in hash table in case print it again later
+          jobs[job], job = :__deleted, jobs[job]
+        end
+      end
+      result
     end
     
     # private methods
@@ -50,5 +62,11 @@ module ShawnLib
       end
       result
     end
+
+    def findRoot job
+      return job unless @jobs_reversed.key? job
+      return findRoot @jobs_reversed[job]
+    end
+
   end
 end
