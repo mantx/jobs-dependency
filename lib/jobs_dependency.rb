@@ -4,19 +4,33 @@ module ShawnLib
   class JobsDependency
     attr_accessor :jobs
 
-    def initialize(jobs='')
-      @jobs = parseJobs jobs 
+    def initialize(jobs='') 
+      @jobs = parseJobs jobs
     end 
 
     def destroy 
     end
 
     def print
-      check
-      puts output
+      begin
+        check
+        puts output
+      rescue => ex
+        puts "Error: #{ex.message}"
+      end
     end
 
     def check
+      @jobs.each do |j1, j2|
+        next if j1.nil?
+        raise "jobs can’t depend on themselves" if j1 == j2
+        passedJobs = []
+        until j2.nil? do
+          passedJobs << j2
+          j2 = @jobs[j2]
+          raise "jobs can’t have circular dependencies" if passedJobs.include? j2
+        end
+      end
     end
 
     def output
@@ -36,6 +50,5 @@ module ShawnLib
       end
       result
     end
-
   end
 end
