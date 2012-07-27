@@ -21,6 +21,7 @@ module ShawnLib
       end
     end
 
+    # check jobs dependencies
     def check
       @jobs.each do |j1, j2|
         next if j1.nil?
@@ -34,6 +35,7 @@ module ShawnLib
       end
     end
 
+    # return a string, which reflect on job dependencies 
     def output
       result = ''
       jobs = @jobs.clone
@@ -42,7 +44,7 @@ module ShawnLib
         job = findRoot j1
         until job.nil? do
           result << job.to_s
-          #empty this job in hash table in case print it again later
+          #empty this job in hash table to avoid printing it again later
           jobs[job], job = :__deleted, jobs[job]
         end
       end
@@ -63,6 +65,7 @@ module ShawnLib
       result
     end
 
+    # return root of ancestor of a job
     def findRoot job
       return job unless @jobs_reversed.key? job
       return findRoot @jobs_reversed[job]
