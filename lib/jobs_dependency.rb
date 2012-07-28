@@ -37,6 +37,7 @@ module ShawnLib
 
     # return a string, which reflect on job dependencies 
     def output
+      return @result unless @result.nil?
       result = ''
       jobs = @jobs.clone
       jobs.each do |j1, j2|
@@ -48,7 +49,7 @@ module ShawnLib
           jobs[job], job = :__deleted, jobs[job]
         end
       end
-      result
+      @result = result
     end
     
     # private methods
